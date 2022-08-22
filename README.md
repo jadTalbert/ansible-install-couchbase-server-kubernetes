@@ -1,0 +1,1 @@
+# ansible-install-couchbase-server-kubernetes
