@@ -10,7 +10,7 @@ It is assumed that you already have Ansible installed. For more information on A
 
 
 ## Setup
-It is recommended that you use a stand-alone host that has Ansible installed on it and use the host to promote changes to your newly provisioned Couchbase nodes.
+It is recommended that you use a stand-alone host that has Ansible installed on it and use the host to promote changes to your newly provisioned EKS cluster.
 
 ## Step1:
 
@@ -77,7 +77,7 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
 
 ###### If the playbooks fail due to an EKS capacity limit, then you will need to review your CloudFormation templates and clean them up manually. This is NOT a problem with the playbooks, but rather the behavior of AWS.
 
-###### IMPORTANT EBS NOTE: These playbooks use persistent volumes and the default is to retain them. If you do not want to retain your EBS volumes, you can set them to be deleted when the cluster is deleted. See the example below for details. 
+###### IMPORTANT EBS NOTE: These playbooks use persistent volumes and the default is to retain them. If you do not want to retain your EBS volumes, you can set them to be deleted when the cluster is deleted. See the example below for details.
 
 #### eks_playbooks/couchbase/couchbase_cluster.yml
 ```
