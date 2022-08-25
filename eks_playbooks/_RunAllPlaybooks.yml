@@ -1,0 +1,7 @@
+# this runs all playbooks in sequential order
+---
+  - import_playbook: includes/pre_flight_checks.yml
+  - import_playbook: ../eks_playbooks/cli/create_eks_cluster.yml
+  - import_playbook: ../eks_playbooks/couchbase/install_couchbase_operator.yml
+  - import_playbook: ../eks_playbooks/couchbase/create_couchbase_cluster.yml
+  

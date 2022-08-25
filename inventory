@@ -1,0 +1,3 @@
+#this is the default inventory file
+[eks]
+localhost ansible_connection=local 

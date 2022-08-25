@@ -1,0 +1,38 @@
+# pre-flight work to determine if the requisite AWS tools are installed
+# variable references can be found in playbooks/group_vars/all.yml
+---
+    #confirm requested engine is installed
+  - name: "Confirm aws CLI is installed on host machine"
+    ansible.builtin.shell:
+      cmd: aws --version
+    register: cli_installed
+
+    #print the variable output
+  - name: AWS CLI command line response
+    ansible.builtin.debug:
+      msg: "AWS CLI Already installed -> {{cli_installed.stdout}}"
+    when: cli_installed.stdout != ""
+
+    #force fail the playbooks if the aws cli tool is not installed on the host machine
+  - name: Force Failed because AWS CLI tools not installed
+    ansible.builtin.fail:
+      msg: You need to install the aws cli tool to continue. See this documentation for details -> https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
+    when: cli_installed.stdout == ""
+
+   #check to see if eksctl cli is installed on host machine
+  - name: "Confirm eksctl CLI is installed on host machine"
+    ansible.builtin.shell:
+      cmd: eksctl version
+    register: eksctl_installed
+
+    #print the variable output
+  - name: eksctl CLI command line response
+    ansible.builtin.debug:
+      msg: "eksctl CLI tool is already installed -> version: {{eksctl_installed.stdout}}"
+    when: eksctl_installed.stdout != ""
+
+    #force fail the playbooks if the eksctl cli tool is not installed on the host machine
+  - name: Force Failed because eksctl CLI tools not installed
+    ansible.builtin.fail:
+      msg: You need to install the eksctl cli tool to continue. See this documentation for details -> https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html
+    when: eksctl_installed.stdout == ""

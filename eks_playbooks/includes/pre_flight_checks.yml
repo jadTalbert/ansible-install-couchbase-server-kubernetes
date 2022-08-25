@@ -1,0 +1,10 @@
+#
+---
+  - hosts: localhost
+
+    tasks:
+      - name: Check Container Engine
+        include_tasks: check_container_engine.yml
+    tasks:
+      - name: Checking aws CLI tool
+        include_tasks: check_aws_tools.yml

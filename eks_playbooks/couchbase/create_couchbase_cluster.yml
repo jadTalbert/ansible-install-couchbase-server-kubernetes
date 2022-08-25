@@ -1,0 +1,13 @@
+---
+- hosts: localhost
+  tasks:
+
+    - name: Create Couchbase Cluster in namespace -> {{install_name_spaces.cao}}
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create -f couchbase_cluster.yml --namespace {{install_name_spaces.cao}}"
+      register: status
+
+    - name: Create Couchbase Users/Roles/Groups-> {{install_name_spaces.cao}}
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create -f couchbase_users.yml --namespace {{install_name_spaces.cao}}"
+      register: status

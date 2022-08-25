@@ -1,0 +1,24 @@
+# pre-flight work to determine if kubernetes/openShift/miniKube is installed
+# variable references can be found in playbooks/group_vars/all.yml
+---
+    #confirm requested engine is installed
+  - name: "Confirm {{platform_cmd}} is installed"
+    ansible.builtin.shell:
+      cmd: "{{platform_cmd}}"
+    register: response
+
+    #print engine info
+  - name: "checking to see if {{platform_cmd}} is installed"
+    ansible.builtin.debug:
+      msg: "{{platform_cmd}} is installed. Continuing...."
+
+    #set the current context
+  - name: setting context
+    ansible.builtin.shell:
+      cmd: "{{platform_cmd}} config use-context {{kubectl_context}}"
+    register: context
+
+    #print the current context
+  - name: printing current context
+    ansible.builtin.debug:
+      msg: "{{context.stdout}}"

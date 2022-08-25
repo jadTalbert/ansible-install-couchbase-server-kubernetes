@@ -1,0 +1,28 @@
+#file to create and EKS cluster using the eksctl command line utility
+#you could also use the community ansible module here -> https://docs.ansible.com/ansible/latest/collections/community/aws/aws_eks_cluster_module.html
+- hosts: localhost
+  tasks:
+
+    - name: Check to see if EKS cluster exists!
+      ansible.builtin.shell: eksctl get cluster \
+       --name {{eks_cluster.name}} \
+       --region {{eks_cluster.region}} \
+       --output json
+      register: clusterAlreadyExists
+      failed_when: clusterAlreadyExists.rc != 0
+      ignore_errors: true
+
+    - name: Checking existence of cluster -> {{eks_cluster.name}}
+      ansible.builtin.debug:
+        msg: "The {{eks_cluster.name}} EKS cluster already exists! So Skipping this step."
+      when: clusterAlreadyExists.rc == 0
+
+
+    - name: "Create EKS Cluster - to see progress open another terminal and execute tail -f {{eks_cluster.logging.file_path}}{{eks_cluster.logging.file_name}}"
+      ansible.builtin.shell:
+        cmd: "eksctl create cluster \
+         --name {{eks_cluster.name}} \
+         --region {{eks_cluster.region}} \
+         --profile {{eks_cluster.profile}} \
+        --version {{eks_cluster.version}} >> {{eks_cluster.logging.file_path}}{{eks_cluster.logging.file_name}}"
+      when: clusterAlreadyExists.rc != 0

@@ -1,0 +1,57 @@
+# install Couchbase Operator
+# variable references can be found in playbooks/group_vars/eks.yml
+---
+- hosts: localhost
+  tasks:
+
+    - name: check to see if CRD is already installed
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} get pods --namespace {{install_name_spaces.cao}}"
+      register: existingInstall
+
+    - name: Printing Installation Information
+      ansible.builtin.debug:
+        #msg: "{{existingInstall}}"
+        msg: "Couchbase Operator Already Installed. Skipping Installation."
+      when: existingInstall.stdout != ""
+
+    #download the operator
+    - name: Download Couchbase Operator
+      get_url:
+        url:  "{{couchbase_operator.download_url}}"
+        dest: "{{couchbase_operator.download_dest_dir}}"
+      when: existingInstall.stdout == ""
+
+    #unzip the operator download file and put it in the requisite directory
+    - name: unzip(unarchive) the Couchbase Operator .zip file
+      ansible.builtin.unarchive:
+        src: "{{couchbase_operator.download_dest_dir}}/{{couchbase_operator.file_name}}"
+        dest: "{{couchbase_operator.unzip_dest_dir}}"
+        list_files: true
+      register: operator_dir
+      when: existingInstall.stdout == ""
+
+
+    #install the CRD into the specified namespace
+    - name: install CRD(Custom Resource Definition)
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create -f {{couchbase_operator.unzip_dest_dir}}{{item}} --namespace {{install_name_spaces.crd}}"
+      loop: "{{operator_dir.files}}"
+      when: operator_dir.files is defined and item | split('/') | last == "crd.yaml"
+
+
+    #install the DAC(bin/cao create admission)
+    - name: install the DAC
+      ansible.builtin.shell:
+        cmd: "{{couchbase_operator.unzip_dest_dir}}{{item}} create admission"
+      loop: "{{operator_dir.files}}"
+      #when: (operator_dir.files is defined and (existingInstall.stdout == "" or item | split('/') | last == "cao")
+      when: operator_dir.files is defined and item | split('/') | last == "cao"
+
+    #install the CAO(Operator)
+    - name: install the Couchbase Operator
+      ansible.builtin.shell:
+        cmd: "{{couchbase_operator.unzip_dest_dir}}{{item}} create operator --namespace {{install_name_spaces.cao}}"
+      loop: "{{operator_dir.files}}"
+      #when: operator_dir.files is defined and (existingInstall.stdout == "" or item | split('/') | last == "cao")
+      when: operator_dir.files is defined and item | split('/') | last == "cao"
