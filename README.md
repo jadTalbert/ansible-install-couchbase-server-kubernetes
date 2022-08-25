@@ -49,7 +49,7 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
   kubectl_context: docker-desktop
   platform_cmd: kubectl
   eks_cluster:
-    name: americanGreetings-Test-Ansible2
+    name: ansiblePlaybookEKSCluster
     region: us-east-1
     profile: default
     version: 1.21
@@ -93,4 +93,4 @@ install_name_spaces.cao  |  kubernetes namespace for the operator
 install_name_spaces.dac  | kubernetes namespace for the DAC
 install_name_spaces.crd  | kubernetes namespace for the CRD(Custom Resource Definitions)
 couchbase_cluster  |  object to hold version information for your couchbase nodes
-couchbase_cluster.install_version  | version of Couchbase you want to install 
+couchbase_cluster.install_version  | version of Couchbase you want to install
