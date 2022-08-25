@@ -70,6 +70,31 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
 
 ```
 
+## What you can expect:
+###### You have to have the right tools installed, so make sure you have the aws cli and eksclt tools available and properly configured for your AWS VPC.
+
+###### The playbooks will do all of the heavy lifting for you, so sit back and let them do the work. However, keep in mind that this is not a fast process, as AWS generally take 15-20 minutes to completely provision an EKS cluster successfully.
+
+###### If the playbooks fail due to an EKS capacity limit, then you will need to review your CloudFormation templates and clean them up manually. This is NOT a problem with the playbooks, but rather the behavior of AWS.
+
+###### IMPORTANT EBS NOTE: These playbooks use persistent volumes and the default is to retain them. If you do not want to retain your EBS volumes, you can set them to be deleted when the cluster is deleted. See the example below for details. 
+
+#### eks_playbooks/couchbase/couchbase_cluster.yml
+```
+#create the storage class that will be used for persisent volumens
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: cb-default-sc
+  namespace: default
+parameters:
+  type: gp2
+  fsType: ext4
+provisioner: kubernetes.io/aws-ebs
+reclaimPolicy: Retain #change this to your desired strategy
+volumeBindingMode: WaitForFirstConsumer
+allowVolumeExpansion: true
+```
 
 ## Global Variable Definitions for eks.yml:
 group_vars                | Description
