@@ -1,0 +1,11 @@
+apiVersion: couchbase.com/v2
+kind: CouchbaseGroup
+metadata:
+  name: developers
+  namespace: default
+  labels:
+    cluster: my-cluster
+spec:
+  roles:
+  - name: bucket_full_access
+    bucket: default

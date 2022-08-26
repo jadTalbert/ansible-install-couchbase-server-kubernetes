@@ -2,12 +2,31 @@
 - hosts: localhost
   tasks:
 
+    - name: Create RoleBindings in namespace-> {{install_name_spaces.cao}}
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create -f role_bindings/create_role_bindings.yml --namespace {{install_name_spaces.cao}}"
+
+
+    - name: Create Kubernetes Secrets for Couchbase cluster in namespace -> {{install_name_spaces.cao}}
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create -f secrets/create_secrets.yml --namespace {{install_name_spaces.cao}}"
+
+
+    - name: Create Kubernetes Storage Classes(EBS Backed Storage) in namespace -> {{install_name_spaces.cao}}
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create -f storage_classes/storage_classes.yml --namespace {{install_name_spaces.cao}}"
+
+
     - name: Create Couchbase Cluster in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
-        cmd: "{{platform_cmd}} create -f couchbase_cluster.yml --namespace {{install_name_spaces.cao}}"
-      register: status
+        cmd: "{{platform_cmd}} create -f cluster/couchbase_cluster.yml --namespace {{install_name_spaces.cao}}"
 
-    - name: Create Couchbase Users/Roles/Groups-> {{install_name_spaces.cao}}
+
+    - name: Create Couchbase Buckets in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
-        cmd: "{{platform_cmd}} create -f couchbase_users.yml --namespace {{install_name_spaces.cao}}"
-      register: status
+        cmd: "{{platform_cmd}} create -f buckets/create_buckets.yml --namespace {{install_name_spaces.cao}}"
+
+
+    - name: Create Couchbase Users,Roles and Groups in namespace -> {{install_name_spaces.cao}}
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create -f users/couchbase_users.yml --namespace {{install_name_spaces.cao}}"

@@ -1,0 +1,26 @@
+
+apiVersion: couchbase.com/v2
+kind: CouchbaseUser
+metadata:
+  name: ansibleuser
+  namespace: default
+  labels:
+    cluster: my-cluster
+spec:
+  fullName: "Ansible User"
+  authDomain: local
+  authSecret: cb-ansible-created-user-credential
+
+---
+
+apiVersion: couchbase.com/v2
+kind: CouchbaseUser
+metadata:
+  name: demouser1
+  namespace: default
+  labels:
+    cluster: my-cluster
+spec:
+  fullName: "Demo User1"
+  authDomain: local
+  authSecret: cb-user-demo1

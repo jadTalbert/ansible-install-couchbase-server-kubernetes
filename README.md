@@ -71,7 +71,7 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
 ```
 
 ## What you can expect:
-###### You have to have the right tools installed, so make sure you have the aws cli and eksclt tools available and properly configured for your AWS VPC.
+###### You need to have the right tools installed, so make sure you have the aws cli and eksclt tools available and properly configured for your AWS VPC.
 
 ###### The playbooks will do all of the heavy lifting for you, so sit back and let them do the work. However, keep in mind that this is not a fast process, as AWS generally take 15-20 minutes to completely provision an EKS cluster successfully.
 
@@ -119,3 +119,26 @@ install_name_spaces.dac  | kubernetes namespace for the DAC
 install_name_spaces.crd  | kubernetes namespace for the CRD(Custom Resource Definitions)
 couchbase_cluster  |  object to hold version information for your couchbase nodes
 couchbase_cluster.install_version  | version of Couchbase you want to install
+
+## How To:
+
+##### Create Couchbase Users & Groups
+When creating a Couchbase local user, follow the below steps:
+
+- open the couchbase/secrets/create_secrets.yml file and add your applicable secrets
+- open the users/couchbase_users.yml and add your users
+- open the groups/create_groups.yml and add your groups and respective roles or you can use the one already provided.
+- open the role_bindings/create_role_bindings.yml file and add your user to bind the role.
+- execute kubectl apply -f on each of the files listed above and the operator will create your user and attach it to the proper role and group.
+
+
+##### Change the default EKS namespace for your cluster
+- Open the group_vars/eks.yml file and modify the ```install_name_spaces``` object with your namespace(s). Note, the Couchbase Operator is a per-namespace operator, and the operator will be deployed to the specified namespace.
+- You will have to modify all of the namespace attributes within .yml files in the following directories if you use a namespace other than the default
+  - buckets
+  - cluster
+  - groups
+  - role_bindings
+  - secrets
+  - storage_classes
+  - users

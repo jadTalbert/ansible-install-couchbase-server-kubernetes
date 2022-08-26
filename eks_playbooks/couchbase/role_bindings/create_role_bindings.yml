@@ -1,0 +1,14 @@
+apiVersion: couchbase.com/v2
+kind: CouchbaseRoleBinding
+metadata:
+  name: developers
+  namespace: default
+spec:
+  subjects:
+  - kind: CouchbaseUser
+    name: ansibleuser
+  - kind: CouchbaseUser
+    name: demouser1
+  roleRef:
+    kind: CouchbaseGroup
+    name: developers

@@ -1,0 +1,27 @@
+#create a couchbase bucket
+apiVersion: couchbase.com/v2
+kind: CouchbaseBucket
+metadata:
+  name: bucket0
+  namespace: default
+spec:
+  memoryQuota: 400Mi
+---
+
+#create another couchbase bucket
+apiVersion: couchbase.com/v2
+kind: CouchbaseBucket
+metadata:
+  name: bucket1
+  namespace: default
+spec:
+  memoryQuota: 300Mi
+
+---
+
+#create another couchbase bucket
+apiVersion: couchbase.com/v2
+kind: CouchbaseBucket
+metadata:
+  name: bucket2
+  namespace: default
