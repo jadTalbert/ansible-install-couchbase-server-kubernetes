@@ -1,0 +1,50 @@
+---
+- hosts: localhost
+  tasks:
+
+    - name: Check git installation
+      ansible.builtin.shell:
+        cmd: git --version
+      register: git_installed
+
+    - name: git not installed message
+      debug:
+        msg: "git is not installed. You must install git to use this playbook and the TLS feature"
+      when: git_installed.stdout == ""
+
+    - name: git already installed message
+      debug:
+        msg: "git is already installed -> {{git_installed.stdout}}"
+
+    - name: (Password Prompt may appear) -> forcefully delete EasyRSA local repo to avoid pull complications and merge conflicts
+      ansible.builtin.shell:
+        cmd: sudo rm -R easy-rsa
+      ignore_errors: true
+
+    - name: clone git repo into tls directory(e.g. eks_playbooks/couchbase/tls/) for EasyRSA(by OpenVPN)
+      ansible.builtin.shell:
+        cmd: git clone -b v3.1.0-rc1 https://github.com/OpenVPN/easy-rsa.git
+      register: clone_status
+
+
+    - name: Initialize and create the CA certificate/key using EasyRSA
+      command: ./easyrsa init-pki
+      args:
+        chdir: easy-rsa/easyrsa3
+        creates: easy-rsa/easyrsa3/pki
+      register: init_out
+
+    - name: easyRSA Initialzied!
+      debug:
+        msg: "{{init_out.stdout_lines}}"
+
+    - name: Configure easyRSA via Jinja template
+      template:
+        src: vars.j2
+        dest: easy-rsa/easyrsa3/pki/vars
+
+    - name: Build CA Keys
+      command: ./easyrsa build-ca nopass
+      args:
+        chdir: easy-rsa/easyrsa3
+        creates: easy-rsa/easyrsa3/pki/private/ca.key

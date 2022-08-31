@@ -3,7 +3,7 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseBucket
 metadata:
   name: bucket0
-  namespace: default
+  namespace: dev
 spec:
   memoryQuota: 400Mi
 ---
@@ -13,7 +13,7 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseBucket
 metadata:
   name: bucket1
-  namespace: default
+  namespace: dev
 spec:
   memoryQuota: 300Mi
 
@@ -24,4 +24,4 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseBucket
 metadata:
   name: bucket2
-  namespace: default
+  namespace: dev

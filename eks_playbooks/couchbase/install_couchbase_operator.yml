@@ -31,6 +31,30 @@
       register: operator_dir
       when: existingInstall.stdout == ""
 
+    #create namespace if it different from the default namespace
+    - name: Create Namespace for Couchbase Operator(if different than default namespace)
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create namespace {{install_name_spaces.cao}}"
+      loop: "{{operator_dir.files}}"
+      when: install_name_spaces.cao != "default"
+      ignore_errors: true
+
+
+    #create namespace if it different from the default namespace
+    - name: Create Namespace for DAC(if different than default namespace)
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create namespace {{install_name_spaces.dac}}"
+      loop: "{{operator_dir.files}}"
+      when: install_name_spaces.dac != "default"
+      ignore_errors: true
+
+    #create namespace if it different from the default namespace
+    - name: Create Namespace for CRD(if different than default namespace)
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create namespace {{install_name_spaces.crd}}"
+      loop: "{{operator_dir.files}}"
+      when: install_name_spaces.crd != "default"
+      ignore_errors: true
 
     #install the CRD into the specified namespace
     - name: install CRD(Custom Resource Definition)
@@ -38,14 +62,13 @@
         cmd: "{{platform_cmd}} create -f {{couchbase_operator.unzip_dest_dir}}{{item}} --namespace {{install_name_spaces.crd}}"
       loop: "{{operator_dir.files}}"
       when: operator_dir.files is defined and item | split('/') | last == "crd.yaml"
-
+      ignore_errors: true
 
     #install the DAC(bin/cao create admission)
     - name: install the DAC
       ansible.builtin.shell:
         cmd: "{{couchbase_operator.unzip_dest_dir}}{{item}} create admission"
       loop: "{{operator_dir.files}}"
-      #when: (operator_dir.files is defined and (existingInstall.stdout == "" or item | split('/') | last == "cao")
       when: operator_dir.files is defined and item | split('/') | last == "cao"
 
     #install the CAO(Operator)

@@ -24,8 +24,9 @@
     download_dest_dir: /tmp/
     unzip_dest_dir: /tmp/
   install_name_spaces:
-    cao: default
+    cao: dev
     dac: default
-    crd: default
+    crd: dev
   couchbase_cluster:
     install_version: 7.1.1
+    enable_tls: false

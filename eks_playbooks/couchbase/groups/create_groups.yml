@@ -2,7 +2,7 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseGroup
 metadata:
   name: developers
-  namespace: default
+  namespace: dev
   labels:
     cluster: my-cluster
 spec:

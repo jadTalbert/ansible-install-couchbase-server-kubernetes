@@ -3,7 +3,7 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseCluster
 metadata:
   name: cb-example
-  namespace: default
+  namespace: dev
 spec:
   securityContext:
     runAsUser: 1000

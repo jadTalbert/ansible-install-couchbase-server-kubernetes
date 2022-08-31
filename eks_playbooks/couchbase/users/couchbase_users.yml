@@ -3,7 +3,7 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseUser
 metadata:
   name: ansibleuser
-  namespace: default
+  namespace: dev
   labels:
     cluster: my-cluster
 spec:
@@ -17,7 +17,7 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseUser
 metadata:
   name: demouser1
-  namespace: default
+  namespace: dev
   labels:
     cluster: my-cluster
 spec:

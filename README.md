@@ -119,6 +119,7 @@ install_name_spaces.dac  | kubernetes namespace for the DAC
 install_name_spaces.crd  | kubernetes namespace for the CRD(Custom Resource Definitions)
 couchbase_cluster  |  object to hold version information for your couchbase nodes
 couchbase_cluster.install_version  | version of Couchbase you want to install
+couchbase_cluster.enable_tls  | to enable TLS for the Kubernetes cluster. Documentation can be found [here](https://docs.couchbase.com/operator/current/tutorial-tls.html) 
 
 ## How To:
 
