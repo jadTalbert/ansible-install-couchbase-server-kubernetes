@@ -1,32 +1,43 @@
 ---
+# documentation links:
+#https://docs.couchbase.com/operator/current/tutorial-tls.html#easyrsa
+#https://github.com/pbonrad/ansible-easyrsa/blob/master/templates/vars.j2
+#https://github.com/pbonrad/ansible-easyrsa/blob/master/tasks/main.yml
+
 - hosts: localhost
   tasks:
 
+      #check to see if git is installed
     - name: Check git installation
       ansible.builtin.shell:
         cmd: git --version
       register: git_installed
 
+      #if git is not installed, message in the console and quit
     - name: git not installed message
       debug:
         msg: "git is not installed. You must install git to use this playbook and the TLS feature"
       when: git_installed.stdout == ""
 
+      #check to see if git is already installed on your localhost
     - name: git already installed message
       debug:
         msg: "git is already installed -> {{git_installed.stdout}}"
 
+      #this playbook was originally build on a Macbook Pro and does not seem to like the become:true setting for the root user
+      #so, using sudo and this will likely promopt your for your Macbook password in the command line.
     - name: (Password Prompt may appear) -> forcefully delete EasyRSA local repo to avoid pull complications and merge conflicts
       ansible.builtin.shell:
         cmd: sudo rm -R easy-rsa
       ignore_errors: true
 
+      #clone the repo. Note, I am using a RC branch as the current master branch was causing problems with the vars file and the location.
     - name: clone git repo into tls directory(e.g. eks_playbooks/couchbase/tls/) for EasyRSA(by OpenVPN)
       ansible.builtin.shell:
         cmd: git clone -b v3.1.0-rc1 https://github.com/OpenVPN/easy-rsa.git
       register: clone_status
 
-
+      #initialize the CA
     - name: Initialize and create the CA certificate/key using EasyRSA
       command: ./easyrsa init-pki
       args:
@@ -34,17 +45,31 @@
         creates: easy-rsa/easyrsa3/pki
       register: init_out
 
+      #output the easy-rsa initialization information from the play above
     - name: easyRSA Initialzied!
       debug:
         msg: "{{init_out.stdout_lines}}"
 
+      #easy-rsa tends to like the vars file to live in the pki directory for this to work properly. Otherwise you get conflicting var file errors.
     - name: Configure easyRSA via Jinja template
       template:
         src: vars.j2
         dest: easy-rsa/easyrsa3/pki/vars
 
+      #build the ca.key file
     - name: Build CA Keys
       command: ./easyrsa build-ca nopass
       args:
         chdir: easy-rsa/easyrsa3
         creates: easy-rsa/easyrsa3/pki/private/ca.key
+
+
+    #see the documentation for the details on this implementation->https://docs.couchbase.com/operator/current/tutorial-tls.html#easyrsa
+    #this builds the requisite DSN SANs(subject alternative names) required for Couchbase Operator to work with TLS
+    - name: "Generate certificate for the couchbase cluter in the {{install_name_spaces.cao}} namespace"
+      command: ./easyrsa --subject-alt-name='DNS:*.cb-example,DNS:*.cb-example.{{install_name_spaces.cao}},DNS:*.cb-example.{{install_name_spaces.cao}}.svc,
+        DNS:*.cb-example.{{install_name_spaces.cao}}.svc.cluster.local,DNS:cb-example-srv,DNS:cb-example-srv.{{install_name_spaces.cao}},
+        DNS:cb-example-srv.{{install_name_spaces.cao}}.svc,DNS:*.cb-example-srv.{{install_name_spaces.cao}}.svc.cluster.local,DNS:localhost' \
+        build-server-full couchbase-server nopass
+      args:
+        chdir: easy-rsa/easyrsa3

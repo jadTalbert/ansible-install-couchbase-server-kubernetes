@@ -29,4 +29,16 @@
     crd: dev
   couchbase_cluster:
     install_version: 7.1.1
-    enable_tls: false
+    tls:
+      enabled: false
+      easy_rsa:
+        vars_path: tls/vars.j2
+        vars:
+          dn_mode: org
+          digest: sha256
+          country: US
+          province: North Carolina
+          city: Charlotte
+          orginization: couchbase
+          email: jad.talbert@couchbase.com
+          org_unit: Professional Services

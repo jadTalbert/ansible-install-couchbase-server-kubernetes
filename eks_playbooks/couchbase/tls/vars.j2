@@ -84,7 +84,7 @@ fi
 #   cn_only  - use just a CN value
 #   org      - use the "traditional" Country/Province/City/Org/OU/email/CN format
 
-set_var EASYRSA_DN	"org"
+set_var EASYRSA_DN	{{couchbase_cluster.tls.easy_rsa.vars.dn_mode}}
 
 # Organizational fields (used with "org" mode and ignored in "cn_only" mode.)
 # These are the default values for fields which will be placed in the
@@ -96,12 +96,12 @@ set_var EASYRSA_DN	"org"
 #       in these "Organizational fields" by Easy-RSA:
 #       back-tick (`)
 
-set_var EASYRSA_REQ_COUNTRY	"US"
-set_var EASYRSA_REQ_PROVINCE	"California"
-set_var EASYRSA_REQ_CITY	"San Francisco"
-set_var EASYRSA_REQ_ORG	"Copyleft Certificate Co"
-set_var EASYRSA_REQ_EMAIL	"me@example.net"
-set_var EASYRSA_REQ_OU		"My Organizational Unit"
+set_var EASYRSA_REQ_COUNTRY	{{couchbase_cluster.tls.easy_rsa.vars.country}}
+set_var EASYRSA_REQ_PROVINCE	{{couchbase_cluster.tls.easy_rsa.vars.province}}
+set_var EASYRSA_REQ_CITY	{{couchbase_cluster.tls.easy_rsa.vars.city}}
+set_var EASYRSA_REQ_ORG	{{couchbase_cluster.tls.easy_rsa.vars.orginization}}
+set_var EASYRSA_REQ_EMAIL	{{couchbase_cluster.tls.easy_rsa.vars.email}}
+set_var EASYRSA_REQ_OU		{{couchbase_cluster.tls.easy_rsa.vars.org_unit}}
 
 # Choose a size in bits for your keypairs. The recommended value is 2048.  Using
 # 2048-bit keys is considered more than sufficient for many years into the
@@ -211,7 +211,7 @@ set_var EASYRSA_KEY_SIZE	2048
 # Do not change this default unless you understand the security implications.
 # Valid choices include: md5, sha1, sha256, sha224, sha384, sha512
 
- set_var EASYRSA_DIGEST		"sha256"
+ set_var EASYRSA_DIGEST		{{couchbase_cluster.tls.easy_rsa.vars.digest}}
 
 # Batch mode. Leave this disabled unless you intend to call Easy-RSA explicitly
 # in batch mode without any user input, confirmation on dangerous operations,
