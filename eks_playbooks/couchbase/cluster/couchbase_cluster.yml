@@ -2,8 +2,7 @@
 apiVersion: couchbase.com/v2
 kind: CouchbaseCluster
 metadata:
-  name: cb-example
-  namespace: dev
+  name: cb-ansible-testa
 spec:
   securityContext:
     runAsUser: 1000
@@ -28,6 +27,11 @@ spec:
         matchLabels:
           cluster: my-cluster
   networking:
+    tls:
+      rootCAs:
+      - couchbase-server-ca
+      secretSource:
+        serverSecretName: couchbase-server-tls
     exposeAdminConsole: true
     adminConsoleServices:
     - data

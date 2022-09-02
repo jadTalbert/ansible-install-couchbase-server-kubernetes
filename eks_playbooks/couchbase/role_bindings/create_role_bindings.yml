@@ -2,7 +2,6 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseRoleBinding
 metadata:
   name: developers
-  namespace: dev
 spec:
   subjects:
   - kind: CouchbaseUser

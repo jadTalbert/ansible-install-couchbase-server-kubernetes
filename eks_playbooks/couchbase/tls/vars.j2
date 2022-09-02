@@ -205,7 +205,7 @@ set_var EASYRSA_KEY_SIZE	2048
 # This is best left alone. Interactively you will set this manually, and BATCH
 # callers are expected to set this themselves.
 
-#set_var EASYRSA_REQ_CN		"ChangeMe"
+set_var EASYRSA_REQ_CN		{{couchbase_cluster.tls.easy_rsa.vars.cn}}
 
 # Cryptographic digest to use.
 # Do not change this default unless you understand the security implications.

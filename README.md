@@ -79,6 +79,20 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
 
 ###### IMPORTANT EBS NOTE: These playbooks use persistent volumes and the default is to retain them. If you do not want to retain your EBS volumes, you can set them to be deleted when the cluster is deleted. See the example below for details.
 
+###### If you want to implement TLS, you should review the [Couchbase TLS](https://docs.couchbase.com/operator/current/concept-tls.html) documentation. These playbooks use easy-rsa by default, and the requisite files are automatically created for you under the ```couchbase/tls/pki``` directory. To customize your certificate(s), easy-rsa uses a ```vars``` file, which has been customized using a Jinja 2 template located here -> ```couchbase/tls/vars.j2```. You can modify this file to meet your needs. After making changes, you will need to re-run the ```couchbase/tls/configure_tls.yml``` using ```ansible-playbook eks_playbooks/couchbase/tls/configure_tls.yml```. This will regenerate your certificate files in the ```pki``` directory.
+
+#### vars.j2 sample:
+variables are located in the ```group_vars/eks.yml``` file.
+```
+set_var EASYRSA_REQ_COUNTRY	{{couchbase_cluster.tls.easy_rsa.vars.country}}
+set_var EASYRSA_REQ_PROVINCE	{{couchbase_cluster.tls.easy_rsa.vars.province}}
+set_var EASYRSA_REQ_CITY	{{couchbase_cluster.tls.easy_rsa.vars.city}}
+set_var EASYRSA_REQ_ORG	{{couchbase_cluster.tls.easy_rsa.vars.orginization}}
+set_var EASYRSA_REQ_EMAIL	{{couchbase_cluster.tls.easy_rsa.vars.email}}
+set_var EASYRSA_REQ_OU		{{couchbase_cluster.tls.easy_rsa.vars.org_unit}}
+
+```
+
 #### eks_playbooks/couchbase/couchbase_cluster.yml
 ```
 #create the storage class that will be used for persisent volumens
@@ -119,7 +133,7 @@ install_name_spaces.dac  | kubernetes namespace for the DAC
 install_name_spaces.crd  | kubernetes namespace for the CRD(Custom Resource Definitions)
 couchbase_cluster  |  object to hold version information for your couchbase nodes
 couchbase_cluster.install_version  | version of Couchbase you want to install
-couchbase_cluster.enable_tls  | to enable TLS for the Kubernetes cluster. Documentation can be found [here](https://docs.couchbase.com/operator/current/tutorial-tls.html) 
+couchbase_cluster.enable_tls  | to enable TLS for the Kubernetes cluster. Documentation can be found [here](https://docs.couchbase.com/operator/current/tutorial-tls.html)
 
 ## How To:
 

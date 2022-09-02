@@ -12,14 +12,28 @@
         cmd: "{{platform_cmd}} create -f secrets/create_secrets.yml --namespace {{install_name_spaces.cao}}"
 
 
+
     - name: Create Kubernetes Storage Classes(EBS Backed Storage) in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
         cmd: "{{platform_cmd}} create -f storage_classes/storage_classes.yml --namespace {{install_name_spaces.cao}}"
 
 
+
+    #this dynamically replaces the current value in the "name" attributed of the metadata with the value from the eks.yml file for the cluster prefix name for each pod_name_prefix
+    #note, becareful, as this is space-senstive and you can disrupt the format of the yaml file!!
+    - name: Update couchbase_cluster.yml file to reflect the name prefix the operator assigned to the cluster(e.g. cb-example-0000)
+      ansible.builtin.replace:
+        path: cluster/couchbase_cluster.yml
+        regexp: '(kind: CouchbaseCluster\n)(metadata:\n)?(.*name:)(.*[a-z0-9])'
+        replace: 'kind: CouchbaseCluster\nmetadata:\n  name: {{couchbase_cluster.pod_name_prefix}}'
+      tags: cb_cluster_set_metadata_name
+
+
+
     - name: Create Couchbase Cluster in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
         cmd: "{{platform_cmd}} create -f cluster/couchbase_cluster.yml --namespace {{install_name_spaces.cao}}"
+      tags: cb_cluster_create
 
 
     - name: Create Couchbase Buckets in namespace -> {{install_name_spaces.cao}}

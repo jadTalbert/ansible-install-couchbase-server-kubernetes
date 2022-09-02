@@ -28,17 +28,20 @@
     dac: default
     crd: dev
   couchbase_cluster:
+    pod_name_prefix: cb-ansible-testa
     install_version: 7.1.1
     tls:
-      enabled: false
+      tls_ca_secret_name: couchbase-server-ca
+      tls_server_secret_name: couchbase-server-tls
       easy_rsa:
         vars_path: tls/vars.j2
         vars:
+          cn: Easy RSA Generated Common Name
           dn_mode: org
           digest: sha256
           country: US
           province: North Carolina
           city: Charlotte
-          orginization: couchbase
+          orginization: Couchbase
           email: jad.talbert@couchbase.com
           org_unit: Professional Services

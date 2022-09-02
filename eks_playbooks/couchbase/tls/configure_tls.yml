@@ -24,12 +24,6 @@
       debug:
         msg: "git is already installed -> {{git_installed.stdout}}"
 
-      #this playbook was originally build on a Macbook Pro and does not seem to like the become:true setting for the root user
-      #so, using sudo and this will likely promopt your for your Macbook password in the command line.
-    - name: (Password Prompt may appear) -> forcefully delete EasyRSA local repo to avoid pull complications and merge conflicts
-      ansible.builtin.shell:
-        cmd: sudo rm -R easy-rsa
-      ignore_errors: true
 
       #clone the repo. Note, I am using a RC branch as the current master branch was causing problems with the vars file and the location.
     - name: clone git repo into tls directory(e.g. eks_playbooks/couchbase/tls/) for EasyRSA(by OpenVPN)
@@ -63,13 +57,59 @@
         chdir: easy-rsa/easyrsa3
         creates: easy-rsa/easyrsa3/pki/private/ca.key
 
-
     #see the documentation for the details on this implementation->https://docs.couchbase.com/operator/current/tutorial-tls.html#easyrsa
     #this builds the requisite DSN SANs(subject alternative names) required for Couchbase Operator to work with TLS
     - name: "Generate certificate for the couchbase cluter in the {{install_name_spaces.cao}} namespace"
-      command: ./easyrsa --subject-alt-name='DNS:*.cb-example,DNS:*.cb-example.{{install_name_spaces.cao}},DNS:*.cb-example.{{install_name_spaces.cao}}.svc,
-        DNS:*.cb-example.{{install_name_spaces.cao}}.svc.cluster.local,DNS:cb-example-srv,DNS:cb-example-srv.{{install_name_spaces.cao}},
-        DNS:cb-example-srv.{{install_name_spaces.cao}}.svc,DNS:*.cb-example-srv.{{install_name_spaces.cao}}.svc.cluster.local,DNS:localhost' \
+      command: ./easyrsa --subject-alt-name='DNS:*.{{couchbase_cluster.pod_name_prefix}},DNS:*.{{couchbase_cluster.pod_name_prefix}}.{{install_name_spaces.cao}},DNS:*.{{couchbase_cluster.pod_name_prefix}}.{{install_name_spaces.cao}}.svc,
+        DNS:*.{{couchbase_cluster.pod_name_prefix}}.{{install_name_spaces.cao}}.svc.cluster.local,DNS:{{couchbase_cluster.pod_name_prefix}}-srv,DNS:{{couchbase_cluster.pod_name_prefix}}-srv.{{install_name_spaces.cao}},
+        DNS:{{couchbase_cluster.pod_name_prefix}}-srv.{{install_name_spaces.cao}}.svc,DNS:*.{{couchbase_cluster.pod_name_prefix}}-srv.{{install_name_spaces.cao}}.svc.cluster.local,DNS:localhost' \
         build-server-full couchbase-server nopass
       args:
         chdir: easy-rsa/easyrsa3
+
+
+      #create new directories to store the cert files for usage when creating Kubernetes secrets for Couchbase Server
+    - name: Create new directory to hold certificate files. Force create if already exists using -p flag
+      command: mkdir -p pki/ pki/private pki/issued pki/private
+
+
+    - name: move ca.crt certificate file
+      command: cp -p ca.crt ../../../pki/
+      args:
+        chdir: easy-rsa/easyrsa3/pki
+
+    - name: move ca.key certificate file
+      command: cp -p ca.key ../../../../pki/private
+      args:
+        chdir: easy-rsa/easyrsa3/pki/private
+
+    - name: move couchbase-server.crt certificate file
+      command: cp -p couchbase-server.crt ../../../../pki/issued
+      args:
+        chdir: easy-rsa/easyrsa3/pki/issued
+
+    - name: move couchbase-server.key certificate file
+      command: cp -p couchbase-server.key ../../../../pki/private
+      args:
+        chdir: easy-rsa/easyrsa3/pki/private
+
+    - name: Delete the easy-rsa directory(git repo)
+      command: sudo rm -R easy-rsa
+
+
+    #create CA secret using the command line. This keeps the secret creation a bit cleaner than using the declarative approach in yaml for TLS
+    #documentation -> https://docs.couchbase.com/operator/current/howto-tls.html
+    - name: Create CA secret for Couchbase cluster in namespace -> {{install_name_spaces.cao}}
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create secret tls {{couchbase_cluster.tls.tls_ca_secret_name}} \
+             --cert ../tls/pki/ca.crt \
+             --key ../tls/pki/private/ca.key --namespace {{install_name_spaces.cao}}"
+
+
+    #create server secret using the command line. This keeps the secret creation a bit cleaner than using the declarative approach in yaml for TLS
+    #documentation -> https://docs.couchbase.com/operator/current/howto-tls.html
+    - name: Create Server secret for Couchbase cluster in namespace -> {{install_name_spaces.cao}}
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} create secret tls {{couchbase_cluster.tls.tls_server_secret_name}} \
+             --cert ../tls/pki/issued/couchbase-server.crt \
+             --key  ../tls/pki/private/couchbase-server.key --namespace {{install_name_spaces.cao}}"
