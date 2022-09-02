@@ -73,13 +73,13 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
 ## What you can expect:
 ###### You need to have the right tools installed, so make sure you have the aws cli and eksclt tools available and properly configured for your AWS VPC.
 
-###### The playbooks will do all of the heavy lifting for you, so sit back and let them do the work. However, keep in mind that this is not a fast process, as AWS generally take 15-20 minutes to completely provision an EKS cluster successfully.
+ The playbooks will do all of the heavy lifting for you, so sit back and let them do the work. However, keep in mind that this is not a fast process, as AWS generally take 15-20 minutes to completely provision an EKS cluster successfully.
 
-###### If the playbooks fail due to an EKS capacity limit, then you will need to review your CloudFormation templates and clean them up manually. This is NOT a problem with the playbooks, but rather the behavior of AWS.
+If the playbooks fail due to an EKS capacity limit, then you will need to review your CloudFormation templates and clean them up manually. This is NOT a problem with the playbooks, but rather the behavior of AWS.
 
-###### IMPORTANT EBS NOTE: These playbooks use persistent volumes and the default is to retain them. If you do not want to retain your EBS volumes, you can set them to be deleted when the cluster is deleted. See the example below for details.
+ IMPORTANT EBS NOTE: These playbooks use persistent volumes and the default is to retain them. If you do not want to retain your EBS volumes, you can set them to be deleted when the cluster is deleted. See the example below for details.
 
-###### If you want to implement TLS, you should review the [Couchbase TLS](https://docs.couchbase.com/operator/current/concept-tls.html) documentation. These playbooks use easy-rsa by default, and the requisite files are automatically created for you under the ```couchbase/tls/pki``` directory. To customize your certificate(s), easy-rsa uses a ```vars``` file, which has been customized using a Jinja 2 template located here -> ```couchbase/tls/vars.j2```. You can modify this file to meet your needs. After making changes, you will need to re-run the ```couchbase/tls/configure_tls.yml``` using ```ansible-playbook eks_playbooks/couchbase/tls/configure_tls.yml```. This will regenerate your certificate files in the ```pki``` directory.
+If you want to implement TLS, you should review the [Couchbase TLS](https://docs.couchbase.com/operator/current/concept-tls.html) documentation. These playbooks use easy-rsa by default, and the requisite files are automatically created for you under the ```couchbase/tls/pki``` directory. To customize your certificate(s), easy-rsa uses a ```vars``` file, which has been customized using a Jinja2 template located here -> ```couchbase/tls/vars.j2```. You can modify this file to meet your needs. After making changes, you will need to re-run the ```couchbase/tls/configure_tls.yml``` using ```ansible-playbook eks_playbooks/couchbase/tls/configure_tls.yml```. This will regenerate your certificate files in the ```pki``` directory.
 
 #### vars.j2 sample:
 variables are located in the ```group_vars/eks.yml``` file.
