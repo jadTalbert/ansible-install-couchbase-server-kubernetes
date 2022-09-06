@@ -3,7 +3,6 @@ apiVersion: couchbase.com/v2
 kind: CouchbaseCluster
 metadata:
   name: cb-ansible-testa
-  namespace: dev
 spec:
   securityContext:
     runAsUser: 1000
@@ -29,7 +28,6 @@ spec:
           cluster: my-cluster
   networking:
     tls:
-      nodeToNodeEncryption: "All"
       rootCAs:
       - couchbase-server-ca
       secretSource:

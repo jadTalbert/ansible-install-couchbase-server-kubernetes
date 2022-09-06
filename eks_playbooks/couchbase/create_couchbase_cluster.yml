@@ -2,43 +2,6 @@
 - hosts: localhost
   tasks:
 
-######## Start: add namespace to .yml files to ensure user can execute kubectl commands independently of ansible ###################
-    #this dynamically replaces the current value in the "name" attributed of the metadata with the value from the eks.yml file for the cluster prefix name for each pod_name_prefix
-    #note, becareful, as this is space-senstive and you can disrupt the format of the yaml file!!
-    - name: Update couchbase_cluster.yml file to reflect the name prefix the operator assigned to the cluster(e.g. cb-example-0000)
-      ansible.builtin.replace:
-        path: "{{item.path}}"
-        regexp: '(kind: {{item.resource_type}}\n)(metadata:\n)?(.*name:)(.*[a-z0-9])'
-        replace: 'kind: {{item.resource_type}}\nmetadata:\n  name: {{couchbase_cluster.pod_name_prefix}}\n  namespace: {{install_name_spaces.cao}}'
-      loop:
-        - { path: 'cluster/couchbase_cluster.yml', resource_type: 'CouchbaseCluster' }
-        - { path: 'buckets/create_buckets.yml', resource_type: 'CouchbaseBucket' }
-        - { path: 'groups/create_groups.yml', resource_type: 'CouchbaseGroup' }
-        - { path: 'role_bindings/create_role_bindings.yml', resource_type: 'CouchbaseRoleBinding' }
-        - { path: 'secrets/create_secrets.yml', resource_type: 'Secret' }
-        - { path: 'storage_classes/storage_classes.yml', resource_type: 'StorageClass' }
-        - { path: 'users/couchbase_users.yml', resource_type: 'CouchbaseUser' }
-      tags: cb_cluster_set_metadata_name
-
-    #this dynamically replaces the current value in the "name" attributed of the metadata with the value from the eks.yml file for the cluster prefix name for each pod_name_prefix
-    #note, becareful, as this is space-senstive and you can disrupt the format of the yaml file!!
-    - name: Update couchbase_cluster.yml file to reflect the name prefix the operator assigned to the cluster(e.g. cb-example-0000)
-      ansible.builtin.replace:
-        path: "{{item.path}}"
-        regexp: '(kind: {{item.resource_type}}\n)(metadata:\n)(.*name:)(.*[a-z0-9]\n)(.*[a-z0-9]\n.*namespace:.*)'
-        replace: 'kind: {{item.resource_type}}\nmetadata:\n  name: {{couchbase_cluster.pod_name_prefix}}\n  namespace: {{install_name_spaces.cao}}'
-      loop:
-        - { path: 'cluster/couchbase_cluster.yml', resource_type: 'CouchbaseCluster' }
-        - { path: 'buckets/create_buckets.yml', resource_type: 'CouchbaseBucket' }
-        - { path: 'groups/create_groups.yml', resource_type: 'CouchbaseGroup' }
-        - { path: 'role_bindings/create_role_bindings.yml', resource_type: 'CouchbaseRoleBinding' }
-        - { path: 'secrets/create_secrets.yml', resource_type: 'Secret' }
-        - { path: 'storage_classes/storage_classes.yml', resource_type: 'StorageClass' }
-        - { path: 'users/couchbase_users.yml', resource_type: 'CouchbaseUser' }
-      tags: cb_cluster_set_metadata_name2
-
-######## END: add namespace to .yml files to ensure user can execute kubectl commands independently of ansible ###################
-
     - name: Create RoleBindings in namespace-> {{install_name_spaces.cao}}
       ansible.builtin.shell:
         cmd: "{{platform_cmd}} create -f role_bindings/create_role_bindings.yml --namespace {{install_name_spaces.cao}}"
@@ -53,6 +16,18 @@
     - name: Create Kubernetes Storage Classes(EBS Backed Storage) in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
         cmd: "{{platform_cmd}} create -f storage_classes/storage_classes.yml --namespace {{install_name_spaces.cao}}"
+
+
+
+    #this dynamically replaces the current value in the "name" attributed of the metadata with the value from the eks.yml file for the cluster prefix name for each pod_name_prefix
+    #note, becareful, as this is space-senstive and you can disrupt the format of the yaml file!!
+    - name: Update couchbase_cluster.yml file to reflect the name prefix the operator assigned to the cluster(e.g. cb-example-0000)
+      ansible.builtin.replace:
+        path: cluster/couchbase_cluster.yml
+        regexp: '(kind: CouchbaseCluster\n)(metadata:\n)?(.*name:)(.*[a-z0-9])'
+        replace: 'kind: CouchbaseCluster\nmetadata:\n  name: {{couchbase_cluster.pod_name_prefix}}'
+      tags: cb_cluster_set_metadata_name
+
 
 
     - name: Create Couchbase Cluster in namespace -> {{install_name_spaces.cao}}

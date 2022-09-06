@@ -1,8 +1,7 @@
 apiVersion: couchbase.com/v2
 kind: CouchbaseRoleBinding
 metadata:
-  name: cb-ansible-testa
-  namespace: dev
+  name: developers
 spec:
   subjects:
   - kind: CouchbaseUser
