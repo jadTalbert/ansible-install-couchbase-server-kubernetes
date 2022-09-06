@@ -2,7 +2,8 @@
 apiVersion: couchbase.com/v2
 kind: CouchbaseBucket
 metadata:
-  name: bucket0
+  name: cb-ansible-testa
+  namespace: dev
 spec:
   memoryQuota: 400Mi
 ---
@@ -11,7 +12,8 @@ spec:
 apiVersion: couchbase.com/v2
 kind: CouchbaseBucket
 metadata:
-  name: bucket1
+  name: cb-ansible-testa
+  namespace: dev
 spec:
   memoryQuota: 300Mi
 
@@ -21,4 +23,5 @@ spec:
 apiVersion: couchbase.com/v2
 kind: CouchbaseBucket
 metadata:
-  name: bucket2
+  name: cb-ansible-testa
+  namespace: dev

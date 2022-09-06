@@ -2,7 +2,8 @@
 apiVersion: couchbase.com/v2
 kind: CouchbaseUser
 metadata:
-  name: ansibleuser
+  name: cb-ansible-testa
+  namespace: dev
   labels:
     cluster: my-cluster
 spec:
@@ -15,7 +16,8 @@ spec:
 apiVersion: couchbase.com/v2
 kind: CouchbaseUser
 metadata:
-  name: demouser1
+  name: cb-ansible-testa
+  namespace: dev
 
   labels:
     cluster: my-cluster

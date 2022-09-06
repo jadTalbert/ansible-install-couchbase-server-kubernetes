@@ -1,7 +1,8 @@
 apiVersion: couchbase.com/v2
 kind: CouchbaseGroup
 metadata:
-  name: developers
+  name: cb-ansible-testa
+  namespace: dev
   labels:
     cluster: my-cluster
 spec:
