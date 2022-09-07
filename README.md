@@ -169,7 +169,7 @@ couchbase_cluster.tls.easy_rsa.unit  |  orginization business unit
 
 ## How To:
 
-##### Create Couchbase Users & Groups
+##### Create Couchbase Users & Groups(Role Based Access Control or RBAC)
 When creating a Couchbase local user, follow the below steps:
 
 - open the couchbase/secrets/create_secrets.yml file and add your applicable secrets
@@ -181,11 +181,3 @@ When creating a Couchbase local user, follow the below steps:
 
 ##### Change the default EKS namespace for your cluster
 - Open the group_vars/eks.yml file and modify the ```install_name_spaces``` object with your namespace(s). Note, the Couchbase Operator is a per-namespace operator, and the operator will be deployed to the specified namespace.
-- You will have to modify all of the namespace attributes within .yml files in the following directories if you use a namespace other than the default
-  - buckets
-  - cluster
-  - groups
-  - role_bindings
-  - secrets
-  - storage_classes
-  - users
