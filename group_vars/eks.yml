@@ -1,12 +1,5 @@
 # this file holds all global variables that are accessible by all playbooks
 
-# kubectl_context -> sets the kubectl_context
-# platform_cmd -> supports kubernetes, OpenShift etc.
-# download_url -> URI where the Operator should be downloaded from
-# file_name -> the name of the operator file
-# download_dest_dir -> directory where you want to put the downloaded operator zip files
-# unzip_dest_dir -> directory where you want to put the unzipped/uncompressed operator list_files
-# installed_name_spaces -> object that contains the cao,dac and crd namespaces.
 ---
   kubectl_context: docker-desktop
   platform_cmd: kubectl

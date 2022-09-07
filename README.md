@@ -134,6 +134,21 @@ install_name_spaces.crd  | kubernetes namespace for the CRD(Custom Resource Defi
 couchbase_cluster  |  object to hold version information for your couchbase nodes
 couchbase_cluster.install_version  | version of Couchbase you want to install
 couchbase_cluster.enable_tls  | to enable TLS for the Kubernetes cluster. Documentation can be found [here](https://docs.couchbase.com/operator/current/tutorial-tls.html)
+couchbase_cluster.pod_name_prefix  |  custom pod name
+couchbase_cluster.tls  | easy-rsa object to hold TLS related variables for certificate creation  
+couchbase_cluster.tls.tls_ca_secret_name  | kubernetes tls ca secret   
+couchbase_cluster.tls.tls_server_secret_name  |  kubernetes tls server secret
+couchbase_cluster.tls.easy_rsa  |  object to hold all easy-rsa variables.
+couchbase_cluster.tls.easy_rsa.vars_path  |  Jinja2 template for easy-rsa file that contains variables for building certificates
+couchbase_cluster.tls.easy_rsa.cn | certificate Common Name(CN)  
+couchbase_cluster.tls.easy_rsa.dn_mode  |  certificate distinguished name(DN)
+couchbase_cluster.tls.easy_rsa.digest  | default sha256  
+couchbase_cluster.tls.easy_rsa.country  |  orginazation Country
+couchbase_cluster.tls.easy_rsa.province  | orginazation province/state   
+couchbase_cluster.tls.easy_rsa.city   |  orginization city
+couchbase_cluster.tls.easy_rsa.orginazation  |  orginization name
+couchbase_cluster.tls.easy_rsa.email  |  orginization email
+couchbase_cluster.tls.easy_rsa.unit  |  orginization business unit
 
 ## How To:
 
