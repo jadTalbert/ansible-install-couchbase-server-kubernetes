@@ -28,6 +28,7 @@ spec:
           cluster: my-cluster
   networking:
     tls:
+      nodeToNodeEncryption: All
       rootCAs:
       - couchbase-server-ca
       secretSource:
