@@ -21,7 +21,7 @@
     dac: default
     crd: dev
   couchbase_cluster:
-    pod_name_prefix: cb-ansible-testa
+    pod_name_prefix: cb-ansible-tesla
     install_version: 7.1.1
     tls:
       tls_ca_secret_name: couchbase-server-ca

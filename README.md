@@ -45,7 +45,7 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
 ## Example Global Variables(eks.yml)
 ```
 # this file holds all global variables that are accessible by all playbooks in the eks_playbooks directory
----
+
   kubectl_context: docker-desktop
   platform_cmd: kubectl
   eks_cluster:
@@ -62,11 +62,28 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
     download_dest_dir: /tmp/
     unzip_dest_dir: /tmp/
   install_name_spaces:
-    cao: default
+    cao: dev
     dac: default
-    crd: default
+    crd: dev
   couchbase_cluster:
+    pod_name_prefix: cb-ansible-tesla
     install_version: 7.1.1
+    tls:
+      tls_ca_secret_name: couchbase-server-ca
+      tls_server_secret_name: couchbase-server-tls
+      easy_rsa:
+        vars_path: tls/vars.j2
+        vars:
+          cn: Easy RSA Generated Common Name
+          dn_mode: org
+          digest: sha256
+          country: US
+          province: North Carolina
+          city: Charlotte
+          orginization: Couchbase
+          email: jad.talbert@couchbase.com
+          org_unit: Professional Services
+
 
 ```
 
