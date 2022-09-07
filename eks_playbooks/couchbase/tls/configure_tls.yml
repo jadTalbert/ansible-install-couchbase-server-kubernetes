@@ -97,6 +97,12 @@
       command: sudo rm -R easy-rsa
 
 
+    - name: get tls CA secret from kubernetes(if it exists)
+      ansible.builtin.shell: kubectl get secret {{couchbase_cluster.tls.tls_ca_secret_name}} \
+         --namespace {{install_name_spaces.cao}} -o name | grep {{couchbase_cluster.tls.tls_ca_secret_name}} | sed "s/^.\{7\}//"
+      register: ca_secret_name
+
+
     #create CA secret using the command line. This keeps the secret creation a bit cleaner than using the declarative approach in yaml for TLS
     #documentation -> https://docs.couchbase.com/operator/current/howto-tls.html
     - name: Create CA secret for Couchbase cluster in namespace -> {{install_name_spaces.cao}}
@@ -104,6 +110,13 @@
         cmd: "{{platform_cmd}} create secret tls {{couchbase_cluster.tls.tls_ca_secret_name}} \
              --cert ../tls/pki/ca.crt \
              --key ../tls/pki/private/ca.key --namespace {{install_name_spaces.cao}}"
+      when: ca_secret_name.stdout != couchbase_cluster.tls.tls_ca_secret_name
+
+
+    - name: get tls server secret from kubernetes(if it exists)
+      ansible.builtin.shell: kubectl get secret {{couchbase_cluster.tls.tls_server_secret_name}} \
+         --namespace {{install_name_spaces.cao}} -o name | grep {{couchbase_cluster.tls.tls_server_secret_name}} | sed "s/^.\{7\}//"
+      register: server_secret_name
 
 
     #create server secret using the command line. This keeps the secret creation a bit cleaner than using the declarative approach in yaml for TLS
@@ -113,3 +126,4 @@
         cmd: "{{platform_cmd}} create secret tls {{couchbase_cluster.tls.tls_server_secret_name}} \
              --cert ../tls/pki/issued/couchbase-server.crt \
              --key  ../tls/pki/private/couchbase-server.key --namespace {{install_name_spaces.cao}}"
+      when: server_secret_name.stdout != couchbase_cluster.tls.tls_server_secret_name
