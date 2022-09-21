@@ -7,7 +7,7 @@
       ansible.builtin.replace:
         path: "{{item.path}}"
         regexp: '(kind: {{item.resource_type}}\n)(metadata:\n)?(.*name:)(.*[a-z0-9])'
-        replace: '\1\2\3\4\n  namespace: {{install_name_spaces.cao}}'
+        replace: '\1\2  name: {{couchbase_cluster.pod_name_prefix}}\n  namespace: {{install_name_spaces.cao}}'
       loop:
         - { path: 'cluster/couchbase_cluster.yml', resource_type: 'CouchbaseCluster', name: '{{couchbase_cluster.pod_name_prefix}}' }
       tags: cb_cluster_couchbase1
@@ -16,8 +16,8 @@
     - name: Update couchbase_cluster.yml file to reflect the name prefix the operator assigned to the cluster(e.g. cb-example-0000)
       ansible.builtin.replace:
         path: "{{item.path}}"
-        regexp: '(kind: {{item.resource_type}}\n)(metadata:\n)?(.*name:)(.*[a-z0-9]\n)(  namespace:.*)\n(. namespace:.*)'
-        replace: '\1\2\3\4\5'
+        regexp: '(kind:\s+CouchbaseCluster\n)(metadata:\n)?(.*name:.*[a-z0-9])(\n\s+namespace:\s+.*\n)?(.*\nspec:\n)'
+        replace: '\1\2\3\n\5'
       loop:
         - { path: 'cluster/couchbase_cluster.yml', resource_type: 'CouchbaseCluster', name: '{{couchbase_cluster.pod_name_prefix}}' }
       tags: cb_cluster_couchbase2
@@ -57,32 +57,32 @@
 
     - name: Create RoleBindings in namespace-> {{install_name_spaces.cao}}
       ansible.builtin.shell:
-        cmd: "{{platform_cmd}} create -f role_bindings/create_role_bindings.yml --namespace {{install_name_spaces.cao}}"
+        cmd: "{{platform_cmd}} apply -f role_bindings/create_role_bindings.yml --namespace {{install_name_spaces.cao}}"
 
 
     - name: Create Kubernetes Secrets for Couchbase cluster in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
-        cmd: "{{platform_cmd}} create -f secrets/create_secrets.yml --namespace {{install_name_spaces.cao}}"
+        cmd: "{{platform_cmd}} apply -f secrets/create_secrets.yml --namespace {{install_name_spaces.cao}}"
 
 
 
     - name: Create Kubernetes Storage Classes(EBS Backed Storage) in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
-        cmd: "{{platform_cmd}} create -f storage_classes/storage_classes.yml --namespace {{install_name_spaces.cao}}"
+        cmd: "{{platform_cmd}} apply -f storage_classes/storage_classes.yml --namespace {{install_name_spaces.cao}}"
 
 
 
     - name: Create Couchbase Cluster in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
-        cmd: "{{platform_cmd}} create -f cluster/couchbase_cluster.yml --namespace {{install_name_spaces.cao}}"
+        cmd: "{{platform_cmd}} apply -f cluster/couchbase_cluster.yml --namespace {{install_name_spaces.cao}}"
       tags: cb_cluster_create
 
 
     - name: Create Couchbase Buckets in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
-        cmd: "{{platform_cmd}} create -f buckets/create_buckets.yml --namespace {{install_name_spaces.cao}}"
+        cmd: "{{platform_cmd}} apply -f buckets/create_buckets.yml --namespace {{install_name_spaces.cao}}"
 
 
     - name: Create Couchbase Users,Roles and Groups in namespace -> {{install_name_spaces.cao}}
       ansible.builtin.shell:
-        cmd: "{{platform_cmd}} create -f users/couchbase_users.yml --namespace {{install_name_spaces.cao}}"
+        cmd: "{{platform_cmd}} apply -f users/couchbase_users.yml --namespace {{install_name_spaces.cao}}"
