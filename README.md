@@ -36,9 +36,9 @@ inventory = /Users/jadtalbert/ansible-install-couchbase-server-kubernetes/invent
 
 
 ## Step 3:
-To use the default ```group_vars/eks.yml``` configurations, you may leave the file in tact and execute the playbooks without making any additional changes. If you want/need specific configuration, you may change those at anytime.
+To use the default ```group_vars/eks.yml``` configurations, you may leave the file in tact and execute the playbooks without making any additional changes if you are using OS X. If you are using another operating system, then you can [download](https://www.couchbase.com/downloads) the Couchbase Autonomous Operator for your specific needs.
 
-To provision a new EKS cluster in your AWS VPC, execute the _RunAllPlaybooks.yml file.
+To provision a new EKS cluster in your AWS VPC, execute the following: ansible-playbooks/eks_playbooks/_RunAllPlaybooks.yml file.
 
 NOTE: You must have the latest [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) tool and the [eksctl cli](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) tools installed. The playbooks will check for these tools and will fail if they are not properly installed.
 
