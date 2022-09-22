@@ -88,7 +88,7 @@ NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest
 ```
 
 ## What you can expect:
-###### You need to have the right tools installed, so make sure you have the aws cli and eksclt tools available and properly configured for your AWS VPC.
+###### You need to have the right tools installed, so make sure you have the aws cli and eksctl tools available and properly configured for your AWS VPC.
 
  The playbooks will do all of the heavy lifting for you, so sit back and let them do the work. However, keep in mind that this is not a fast process, as AWS generally take 15-20 minutes to completely provision an EKS cluster successfully.
 
