@@ -31,13 +31,30 @@
       register: operator_dir
       when: existingInstall.stdout == ""
 
+
+    - name: Check to see if namespace already exists prior to creating Operator
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} get namespace \
+          -l kubernetes.io/metadata.name={{install_name_spaces.cao}} -o json | jq '.items[].metadata.name'"
+      register: cao_name_space_exists
+
+
+
     #create namespace if it different from the default namespace
     - name: Create Namespace for Couchbase Operator(if different than default namespace)
       ansible.builtin.shell:
         cmd: "{{platform_cmd}} create namespace {{install_name_spaces.cao}}"
       loop: "{{operator_dir.files}}"
-      when: install_name_spaces.cao != "default"
+      when: install_name_spaces.cao != "default" and cao_name_space_exists == ""
       ignore_errors: true
+
+
+
+    - name: Check to see if namespace already exists prior to creating DAC
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} get namespace \
+          -l kubernetes.io/metadata.name={{install_name_spaces.dac}} -o json | jq '.items[].metadata.name'"
+      register: dac_name_space_exists
 
 
     #create namespace if it different from the default namespace
@@ -45,16 +62,27 @@
       ansible.builtin.shell:
         cmd: "{{platform_cmd}} create namespace {{install_name_spaces.dac}}"
       loop: "{{operator_dir.files}}"
-      when: install_name_spaces.dac != "default"
+      when: install_name_spaces.dac != "default" and dac_name_space_exists == ""
       ignore_errors: true
+
+
+
+    - name: Check to see if namespace already exists prior to creating CRD
+      ansible.builtin.shell:
+        cmd: "{{platform_cmd}} get namespace \
+          -l kubernetes.io/metadata.name={{install_name_spaces.crd}} -o json | jq '.items[].metadata.name'"
+      register: crd_name_space_exists
+
 
     #create namespace if it different from the default namespace
     - name: Create Namespace for CRD(if different than default namespace)
       ansible.builtin.shell:
         cmd: "{{platform_cmd}} create namespace {{install_name_spaces.crd}}"
-      loop: "{{operator_dir.files}}"
-      when: install_name_spaces.crd != "default"
+      #loop: "{{operator_dir.files}}"
+      when: install_name_spaces.crd != "default" and crd_name_space_exists.stdout == ""
       ignore_errors: true
+
+
 
     #install the CRD into the specified namespace
     - name: install CRD(Custom Resource Definition)

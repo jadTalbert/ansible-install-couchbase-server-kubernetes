@@ -3,19 +3,19 @@
 - hosts: localhost
   tasks:
 
-    - name: Check to see if EKS cluster exists!
-      ansible.builtin.shell: eksctl get cluster \
-       --name {{eks_cluster.name}} \
-       --region {{eks_cluster.region}} \
-       --output json
-      register: clusterAlreadyExists
-      failed_when: clusterAlreadyExists.rc != 0
-      ignore_errors: true
+    - name: Get all EKS clusters available to us!
+      ansible.builtin.shell: eksctl get clusters \
+        --region {{eks_cluster.region}} \
+        --output json | jq  '.[].metadata | .name | select(.=="{{eks_cluster.name}}")'
+      register: clusterInfo
+      tags: eks_cluster_exists
 
-    - name: Checking existence of cluster -> {{eks_cluster.name}}
+
+    - name: Checking existence of cluster -> {{eks_cluster.name}} in region -> {{eks_cluster.region}}
       ansible.builtin.debug:
-        msg: "The {{eks_cluster.name}} EKS cluster already exists! So Skipping this step."
-      when: clusterAlreadyExists.rc == 0
+        msg: "Requested cluster {{eks_cluster.name}} in region {{eks_cluster.region}} does not exist, so creating it for you now!"
+      when: clusterInfo.stdout == ""
+      tags: debug_me
 
 
     - name: "Create EKS Cluster - to see progress open another terminal and execute tail -f {{eks_cluster.logging.file_path}}{{eks_cluster.logging.file_name}}"
@@ -24,5 +24,5 @@
          --name {{eks_cluster.name}} \
          --region {{eks_cluster.region}} \
          --profile {{eks_cluster.profile}} \
-        --version {{eks_cluster.version}} >> {{eks_cluster.logging.file_path}}{{eks_cluster.logging.file_name}}"
-      when: clusterAlreadyExists.rc != 0
+         --version {{eks_cluster.version}} >> {{eks_cluster.logging.file_path}}{{eks_cluster.logging.file_name}}"
+      when: clusterInfo.stdout == ""
