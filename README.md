@@ -181,3 +181,12 @@ When creating a Couchbase local user, follow the below steps:
 
 ##### Change the default EKS namespace for your cluster
 - Open the group_vars/eks.yml file and modify the ```install_name_spaces``` object with your namespace(s). Note, the Couchbase Operator is a per-namespace operator, and the operator will be deployed to the specified namespace.
+
+
+##### How to see your pods
+```kubectl get pods -n <yourNameSpaceHere> --watch```
+
+
+##### How to access your Couchbase Admin UI
+Fist, implement port forwarding```kubectl port-forward <yourPodNameHere> 8091```
+Then, launch your browser using http://localhost:8091
