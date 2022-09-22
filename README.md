@@ -40,7 +40,7 @@ To use the default ```group_vars/eks.yml``` configurations, you may leave the fi
 
 To provision a new EKS cluster in your AWS VPC, execute the _RunAllPlaybooks.yml file.
 
-NOTE: You must have the latests [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) tool and the [eksctl cli](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) tools installed. The playbooks will check for these tools and will fail if they are not properly installed.
+NOTE: You must have the latest [aws cli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) tool and the [eksctl cli](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html) tools installed. The playbooks will check for these tools and will fail if they are not properly installed.
 
 ## Example Global Variables(eks.yml)
 ```
