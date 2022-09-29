@@ -188,5 +188,5 @@ When creating a Couchbase local user, follow the below steps:
 
 
 ##### How to access your Couchbase Admin UI
-Fist, implement port forwarding```kubectl port-forward <yourPodNameHere> 8091```
+First, implement port forwarding```kubectl port-forward <yourPodNameHere> 8091```
 Then, launch your browser using http://localhost:8091
